@@ -165,11 +165,11 @@ let a = $.ajax({
         let currentM = new mapboxgl.Marker()
         navigator.geolocation.getCurrentPosition(position => {
             eventLngLat = [position.coords.longitude, position.coords.latitude]
-            console.log(eventLngLat)
             currentM.setLngLat(eventLngLat)
                 .addTo(map);
             document.querySelector('.listing-container').id = 'show-bar'
             query(eventLngLat)
+            console.log('latlang',eventLngLat)
         })
         if (geocoder) {
             eventLngLat = '';
