@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Explore points of interest by radius</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
+
+    <!-- using online links -->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+        integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="//malihu.github.io/custom-scrollbar/jquery.mCustomScrollbar.min.css">
+
+    <!-- Mapbox section -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src='js/mapbox-gl.js'></script>
+    <!-- Load the `mapbox-gl-geocoder` plugin. -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js">
+    </script>
+    <link rel="stylesheet"
+        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
+        type="text/css">
+
+    <!-- Promise polyfill script is required -->
+    <!-- to use Mapbox GL Geocoder in IE 11. -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/checktemp.css">
+</head>
+<style>
+     #menu {
+        background: #f0f0f0;
+        z-index: 1;
+        /* border-radius: 3px; */
+        font-family: 'Open Sans', sans-serif;
+        padding: 10px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        margin: auto;
+        border: 1px solid #0000;
+        /* width: 75%; */
+        box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    }
+
+    label  {
+        font-size: 12px;
+        color: #404040;
+        margin: 0;
+        padding: 0;
+        padding: 6px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 300;
+    }
+
+    #menu a:last-child {
+        border: none;
+    }
+
+    #menu a:hover {
+        background-color: #f8f8f8;
+        color: #404040;
+    }
+
+    #menu a.active {
+        background-color: #3887be;
+        color: #000;
+    }
+
+    #menu a.active:hover {
+        background: #3074a4;
+    }
+    .header-menu {
+        padding: 5px;
+    }
+    #hide-bar {
+        visibility: hidden;
+    }
+    #show-bar {
+        visibility: block;
+        transition: opacity 250ms ease-in;
+    }
+    .mapboxgl-ctrl-bottom-right {
+        bottom: 0 !important;
+        transition: opacity 250ms ease-in;
+    }
+
+    #query-count {
+        background-color: #23A455 !important;
+    }
+    .mapboxgl-ctrl-logo {
+        display: none !important;
+    }
+    .mapboxgl-ctrl-attrib-inner {
+        z-index: 0 !important;
+    }
+</style>
+<body>
+   
+    <div id='map' class='map'></div>
+
+    <div class='pin-topleft pin-bottomleft z1 col3 listing-container'>
+        <div class='fill-white full-height-container'>
+            <div id='filter-categories' class='checkbox-pill col12 clearfix'>
+
+            </div>
+            <div id='listing' class='scroll round-bottom fill-light round-bottom'>
+                <ul style="border-bottom:1px solid #0000003d;margin-bottom:0">
+                    <li class="header-menu">
+                        <span style="font-size: 16px;font-weight: bold;">Search Results</span>
+                        <span id="query-count" class="badge badge-pill badge-success"
+                            style="padding: 5px 10px;border-radius: 2px;float:right;margin-right:5px">0</span>
+                    </li>
+                </ul>
+                <ul id="default">
+                    <li class="header-menu">
+                        <span style="color:#0000007d;font-size: 12px;">No data found. . . . . . </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="menu"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+    </script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="js/map.js"></script>
+
+    <script>
+        function openInNewTab(url) {
+            window.open(url, '_blank').focus();
+        }
+        let pl = document.querySelector(".mapboxgl-ctrl-geocoder--input").placeholder = 'Search city / zip'
+        document.querySelector('.listing-container').id = 'hide-bar'
+    </script>
+</body>
+
+</html>
